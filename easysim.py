@@ -1449,7 +1449,7 @@ UNIT_OPTIONS = ["Seconds", "Minutes", "Hours"]
 def init_state():
     if "welcome_done" not in st.session_state:
         st.session_state.welcome_done = False
-     if "step" not in st.session_state:
+    if "step" not in st.session_state:
         st.session_state.update({
             "step": 1,
             "current_path_idx": 0,
