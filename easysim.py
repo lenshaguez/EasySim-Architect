@@ -1176,12 +1176,37 @@ CSS = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@300;400;500&display=swap');
 
+/* ── NEW ANIMATION KEYFRAMES ── */
+@keyframes gradientMorph {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── UPDATED APP CONTAINER ── */
+.stApp {
+    background: linear-gradient(-45deg, #f8f9fa, #e8f0fe, #ffffff, #d0e8ff);
+    background-size: 400% 400%;
+    animation: gradientMorph 12s ease infinite;
+}
+
 html, body, [class*="css"] {
     font-family: 'Roboto', sans-serif !important;
-    background: #f8f9fa;
     color: #000000;
 }
-.main .block-container { padding-top: 0; max-width: 780px; margin: 0 auto; }
+
+.main .block-container { 
+    padding-top: 0; 
+    max-width: 780px; 
+    margin: 0 auto;
+    animation: fadeInUp 0.8s ease-out; /* Adds entrance transition to main content */
+}
+
 #MainMenu, footer, header { visibility: hidden; }
 
 /* ── HEADER ── */
@@ -1227,6 +1252,7 @@ html, body, [class*="css"] {
     border-radius: 4px;
     padding: 16px 20px;
     margin-bottom: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05); /* Subtle depth */
 }
 .ez-card-title {
     font-size: 0.95rem; font-weight: 700;
@@ -1263,11 +1289,13 @@ html, body, [class*="css"] {
     font-weight: 600 !important;
     font-size: 0.875rem !important;
     padding: 8px 22px !important;
-    transition: background 0.15s !important;
+    transition: all 0.2s ease !important;
 }
 .stButton > button:hover {
     background-color: #005a9e !important;
     color: #ffffff !important;
+    transform: translateY(-2px); /* Lift effect */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 .stButton > button:disabled {
     background-color: #c8c8c8 !important;
@@ -1494,28 +1522,43 @@ def init_state():
 # =============================================================
 # SECTION 9 : UI HELPERS
 # =============================================================
+
 def render_welcome_page():
-    st.markdown('<div class="ez-card">', unsafe_allow_html=True)
-    st.title("🚀 EasySim: Sovereign Architect v4.3")
-    st.markdown("### The Digital Twin for Industrial Profitability")
-    st.write("---")
+    st.markdown('<div class="welcome-card">', unsafe_allow_html=True)
+
+    st.markdown('<h1 class="hero-title">EasySim</h1>', unsafe_allow_html=True)
+    st.markdown('<p class="hero-subtitle">Sovereign Architect v4.3</p>', unsafe_allow_html=True)
 
     st.markdown("""
-    **EasySim** is a high-fidelity **Discrete Event Simulation (DES)** engine designed specifically for MSMEs. 
-    Unlike standard spreadsheets, we capture the stochastic variability of the factory floor to reveal 'Invisible Leakage.'
-    
-    #### **Key Demonstration Capabilities:**
-    *   **3-Phase Engine Handshake:** Precision tracking of every individual part.
-    *   **The Stability Gate:** Real-time mathematical load analysis (Rho logic).
-    *   **Financial Integration:** Real-time P&L reporting in **RUPEES.**
-    *   **Process Mapping:** ASME-standard visuals (Circles, Squares, Triangles).
+    A sophisticated Discrete Event Simulation environment engineered for 
+    Industrial Engineering and Management. Move beyond static analysis into 
+    dynamic digital twins.
     """)
 
-    if st.button("START ARCHITECT ENGINE", use_container_width=True):
+    st.markdown('<div class="feature-grid">', unsafe_allow_html=True)
+
+    features = [
+        ("DES KERNEL", "3-Phase handshake protocol for high-fidelity part tracking."),
+        ("STOCHASTIC", "Capture floor variability via Normal, Exponential, and Weibull distributions."),
+        ("FINANCIALS", "Automated P&L conversion for RUPEES. denominated opportunity costs."),
+        ("ASME VISUALS", "Standardized process mapping for operational certification.")
+    ]
+
+    for title, desc in features:
+        st.markdown(f"""
+        <div class="feature-item">
+            <b>{title}</b>
+            <span style="font-size:0.85rem; color:#666;">{desc}</span>
+        </div>
+        """, unsafe_allow_html=True)
+
+    st.markdown('</div><br>', unsafe_allow_html=True)
+
+    if st.button("INITIALIZE ARCHITECT INTERFACE"):
         st.session_state.welcome_done = True
         st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
 
+    st.markdown('</div>', unsafe_allow_html=True)
 
 def render_header():
     st.markdown(
@@ -2188,20 +2231,23 @@ def step7():
 
 def main():
     st.set_page_config(
-        page_title="EasySim v4.3 | Sovereign DES",
+        page_title="EasySim | Sovereign Architect",
         layout="wide",
-        initial_sidebar_state="expanded",
+        initial_sidebar_state="collapsed", # Hide sidebar initially for better morph effect
     )
     st.markdown(CSS, unsafe_allow_html=True)
     init_state()
 
-    # --- THE WELCOME GATE ---
     if not st.session_state.welcome_done:
-        _, col, _ = st.columns([1, 2, 1])
+        # Centering the welcome card on a professional grid
+        _, col, _ = st.columns([1, 1.5, 1])
         with col:
+            st.markdown('<div style="height:10vh;"></div>', unsafe_allow_html=True) # Top spacing
             render_welcome_page()
-        return # Stop here until they click 'Start'
+        return
 
+    # Once started, expand the sidebar and show engine
+    st.set_option('client.showSidebarNavigation', True)
     # --- THE ENGINE LOGIC (Existing) ---
     render_sidebar()
     _, col, _ = st.columns([1, 5, 1])
