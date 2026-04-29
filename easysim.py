@@ -1447,7 +1447,9 @@ UNIT_OPTIONS = ["Seconds", "Minutes", "Hours"]
 
 
 def init_state():
-    if "step" not in st.session_state:
+    if "welcome_done" not in st.session_state:
+        st.session_state.welcome_done = False
+     if "step" not in st.session_state:
         st.session_state.update({
             "step": 1,
             "current_path_idx": 0,
@@ -1492,6 +1494,28 @@ def init_state():
 # =============================================================
 # SECTION 9 : UI HELPERS
 # =============================================================
+def render_welcome_page():
+    st.markdown('<div class="ez-card">', unsafe_allow_html=True)
+    st.title("🚀 EasySim: Sovereign Architect v4.3")
+    st.markdown("### The Digital Twin for Industrial Profitability")
+    st.write("---")
+
+    st.markdown("""
+    **EasySim** is a high-fidelity **Discrete Event Simulation (DES)** engine designed specifically for MSMEs. 
+    Unlike standard spreadsheets, we capture the stochastic variability of the factory floor to reveal 'Invisible Leakage.'
+    
+    #### **Key Demonstration Capabilities:**
+    *   **3-Phase Engine Handshake:** Precision tracking of every individual part.
+    *   **The Stability Gate:** Real-time mathematical load analysis (Rho logic).
+    *   **Financial Integration:** Real-time P&L reporting in **RUPEES.**
+    *   **Process Mapping:** ASME-standard visuals (Circles, Squares, Triangles).
+    """)
+
+    if st.button("START ARCHITECT ENGINE", use_container_width=True):
+        st.session_state.welcome_done = True
+        st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
+
 
 def render_header():
     st.markdown(
@@ -2164,19 +2188,28 @@ def step7():
 
 def main():
     st.set_page_config(
-        page_title="EasySim v4.0 | Sovereign DES",
+        page_title="EasySim v4.3 | Sovereign DES",
         layout="wide",
         initial_sidebar_state="expanded",
     )
     st.markdown(CSS, unsafe_allow_html=True)
     init_state()
-    render_sidebar()
 
+    # --- THE WELCOME GATE ---
+    if not st.session_state.welcome_done:
+        _, col, _ = st.columns([1, 2, 1])
+        with col:
+            render_welcome_page()
+        return # Stop here until they click 'Start'
+
+    # --- THE ENGINE LOGIC (Existing) ---
+    render_sidebar()
     _, col, _ = st.columns([1, 5, 1])
     with col:
         render_header()
         render_progress()
         step = st.session_state.step
+        # ... (all your existing if/elif step logic stays here)
         if   step == 1: step1()
         elif step == 2: step2()
         elif step == 3: step3()
