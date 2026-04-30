@@ -1,8 +1,5 @@
 # =============================================================
 # EASYSIM — L-UDTG SOVEREIGN DES ARCHITECT
-# Single-file Streamlit Application
-# Engine: Custom Python DES kernel derived from JaamSim/AnyLogic
-# =============================================================
 
 import streamlit as st
 import heapq
